@@ -85,6 +85,31 @@ document.addEventListener('DOMContentLoaded', () => {
   initApp();
   bindEvents();
   detectActiveTabProfile();
+
+  // Pratick Labs footer → open portfolio
+  const footer = document.getElementById('pratickFooter');
+  if (footer) {
+    footer.style.cursor = 'pointer';
+    footer.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://pratikbothra.vercel.app/' });
+    });
+  }
+
+  // Ko-fi header button
+  const kofiBtn = document.getElementById('kofiBtn');
+  if (kofiBtn) {
+    kofiBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://ko-fi.com/G4F124EFM7' });
+    });
+  }
+
+  // Ko-fi support strip above footer
+  const kofiStrip = document.getElementById('kofiStrip');
+  if (kofiStrip) {
+    kofiStrip.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://ko-fi.com/G4F124EFM7' });
+    });
+  }
 });
 
 /* ----------------------------------------------------
