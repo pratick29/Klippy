@@ -165,46 +165,48 @@ body {
 
 /* ─── The Klippy Logo Badge ─── */
 .logo-badge {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  border-radius: var(--r-md);
-  background: var(--logo-gradient);
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: var(--glow-md), 0 2px 8px rgba(0,0,0,0.5);
+  box-shadow:
+    0 0 0 1px rgba(16,185,129,0.25),
+    0 4px 12px rgba(0,0,0,0.4),
+    0 0 20px rgba(16,185,129,0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   flex-shrink: 0;
   position: relative;
 }
 
 .logo-badge:hover {
-  transform: scale(1.05);
-  box-shadow: var(--glow-lg);
-}
-
-.logo-badge svg {
-  filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+  transform: scale(1.06);
+  box-shadow:
+    0 0 0 1px rgba(16,185,129,0.4),
+    0 6px 18px rgba(0,0,0,0.5),
+    0 0 28px rgba(16,185,129,0.35);
 }
 
 /* Logo image fills the badge exactly */
 .header-logo-img {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   object-fit: cover;
   object-position: center;
   display: block;
-  border-radius: var(--r-md);
+  border-radius: 12px;
 }
 
-.brand-text { display: flex; flex-direction: column; gap: 1px; }
+.brand-text { display: flex; flex-direction: column; gap: 2px; }
 
 .brand-text h1 {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
   color: var(--text-primary);
   line-height: 1;
 }
