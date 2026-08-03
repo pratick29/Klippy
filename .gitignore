@@ -19,3 +19,8 @@ node_modules/
 # Build artifacts
 dist/
 build/
+
+# Large video files
+*.mp4
+*.mov
+*.avi

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="icons/klippy_logo_hd.png" alt="Klippy Logo" width="120" style="border-radius: 28px;" />
+<img src="icons/klippy_logo_hd.png" alt="Klippy Logo" width="120" />
 
 # Klippy
 
@@ -8,7 +8,7 @@
 
 A beautiful Chrome extension that serves as your **personal vault** for profile links, passwords, API keys, and secure notes — with one-click copy, smart auto-detection, and master password protection.
 
-[![Ko-fi](https://img.shields.io/badge/Support%20on-Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/G4F124EFM7)
+[![Ko-fi](https://img.shields.io/badge/Support%20on-Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/praticklabs)
 [![GitHub](https://img.shields.io/badge/GitHub-pratick29%2FKlippy-181717?style=for-the-badge&logo=github)](https://github.com/pratick29/Klippy)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://github.com/pratick29/Klippy)
 
@@ -16,13 +16,15 @@ A beautiful Chrome extension that serves as your **personal vault** for profile 
 
 ---
 
-## 🎬 Launch Video
+## 🎬 Demo Video
 
-https://github.com/user-attachments/assets/klippy-launch-video
+<div align="center">
 
-> *See Klippy in action — saving links, passwords, API keys, and copying with one click.*
+[![Watch Klippy Launch Video](https://img.youtube.com/vi/0baoLi5PJ8c/maxresdefault.jpg)](https://youtu.be/0baoLi5PJ8c)
 
-> **Note:** After pushing, upload `klippy-launch-video.mp4` via **GitHub → Releases** or drag it into any issue/PR to get the embeddable link, then replace the URL above.
+**[▶ Watch on YouTube](https://youtu.be/0baoLi5PJ8c)** — See how to save links, passwords, API keys and copy with one click.
+
+</div>
 
 ---
 
@@ -69,7 +71,11 @@ https://github.com/user-attachments/assets/klippy-launch-video
 
 If Klippy saves you time, consider buying me a coffee!
 
-[![Buy Me A Coffee](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G4F124EFM7)
+<div align="center">
+
+[![Buy Me A Coffee](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/praticklabs)
+
+</div>
 
 Every coffee helps keep Klippy free and actively maintained. 💜
 

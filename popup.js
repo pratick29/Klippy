@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const kofiBtn = document.getElementById('kofiBtn');
   if (kofiBtn) {
     kofiBtn.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://ko-fi.com/G4F124EFM7' });
+      chrome.tabs.create({ url: 'https://ko-fi.com/praticklabs' });
     });
   }
 
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const kofiStrip = document.getElementById('kofiStrip');
   if (kofiStrip) {
     kofiStrip.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://ko-fi.com/G4F124EFM7' });
+      chrome.tabs.create({ url: 'https://ko-fi.com/praticklabs' });
     });
   }
 });
