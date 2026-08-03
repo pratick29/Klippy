@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klippy — Launch Video</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #10b981;
+    --green-bright: #34d399;
+    --green-glow: #059669;
+    --green-dark: #064e3b;
+    --bg: #020c09;
+    --purple: #a78bfa;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Inter', sans-serif;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    position: relative;
+    cursor: none;
+  }
+
+  /* ── Particle Canvas ── */
+  #particles { position: absolute; inset: 0; z-index: 0; }
+
+  /* ── Scene System ── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .scene.active { pointer-events: auto; }
+
+  /* ── Grid Lines Background ── */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(16,185,129,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(16,185,129,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 1;
+  }
+
+  /* ── Vignette ── */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(2,12,9,0.85) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* ── Progress Bar ── */
+  #progressBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green-dark), var(--green), var(--green-bright));
+    z-index: 999;
+    transition: width 0.3s linear;
+    box-shadow: 0 0 10px var(--green);
+  }
+
+  /* ── Scene Controls ── */
+  #controls {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    display: flex;
+    gap: 10px;
+    z-index: 999;
+  }
+  #controls button {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--green-bright);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+  }
+  #controls button:hover { background: rgba(16,185,129,0.3); }
+
+  #sceneCounter {
+    position: fixed;
+    bottom: 22px;
+    left: 24px;
+    color: rgba(16,185,129,0.4);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    z-index: 999;
+  }
+
+  /* ════════════════════════════════
+     SCENE 1 — INTRO / LOGO REVEAL
+  ════════════════════════════════ */
+  #scene1 .logo-ring {
+    width: 180px;
+    height: 180px;
+    border-radius: 42px;
+    overflow: hidden;
+    box-shadow:
+      0 0 60px rgba(16,185,129,0.6),
+      0 0 120px rgba(16,185,129,0.3),
+      0 0 200px rgba(16,185,129,0.1);
+    animation: s1-logo 1s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  #scene1 .logo-ring img { width: 100%; height: 100%; object-fit: cover; }
+
+  #scene1 .s1-name {
+    margin-top: 28px;
+    font-size: 72px;
+    font-weight: 900;
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, #ffffff 0%, #d1fae5 40%, var(--green-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: s1-text 0.8s 0.4s cubic-bezier(0.34,1.4,0.64,1) both;
+  }
+
+  #scene1 .s1-tagline {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    color: rgba(52,211,153,0.7);
+    text-transform: uppercase;
+    animation: s1-text 0.8s 0.8s ease both;
+  }
+
+  @keyframes s1-logo {
+    from { opacity: 0; transform: scale(0.3) rotate(-20deg); filter: blur(20px); }
+    to   { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+  }
+  @keyframes s1-text {
+    from { opacity: 0; transform: translateY(30px); filter: blur(6px); }
+    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  /* ════════════════════════════════
+     SCENE 2 — PROBLEM STATEMENT
+  ════════════════════════════════ */
+  #scene2 .s2-eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-transform: uppercase;
+    animation: fadeUp 0.7s 0.1s both;
+  }
+  #scene2 .s2-headline {
+    margin-top: 16px;
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1.1;
+    text-align: center;
+    color: white;
+    max-width: 700px;
+    animation: fadeUp 0.7s 0.3s both;
+  }
+  #scene2 .s2-headline span { color: var(--green-bright); }
+  #scene2 .s2-sub {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.6;
+    animation: fadeUp 0.7s 0.55s both;
+  }
+  .s2-tabs {
+    display: flex;
+    gap: 12px;
+    margin-top: 36px;
+    animation: fadeUp 0.7s 0.75s both;
+  }
+  .s2-tab {
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(16,185,129,0.3);
+    background: rgba(16,185,129,0.08);
+    color: var(--green-bright);
+    letter-spacing: 0.3px;
+  }
+
+  /* ════════════════════════════════
+     SCENE 3 — FEATURE CARDS
+  ════════════════════════════════ */
+  #scene3 .s3-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s both;
+  }
+  #scene3 .s3-title span { color: var(--green-bright); }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    width: 900px;
+  }
+  .feature-card {
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.15);
+    border-radius: 16px;
+    padding: 22px 18px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+  }
+  .feature-card .fc-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .feature-card .fc-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 6px;
+  }
+  .feature-card .fc-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+  }
+  .feature-card:nth-child(1) { animation: cardIn 0.5s 0.1s both; }
+  .feature-card:nth-child(2) { animation: cardIn 0.5s 0.2s both; }
+  .feature-card:nth-child(3) { animation: cardIn 0.5s 0.3s both; }
+  .feature-card:nth-child(4) { animation: cardIn 0.5s 0.4s both; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(40px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ════════════════════════════════
+     SCENE 4 — AUTO-DETECT DEMO
+  ════════════════════════════════ */
+  #scene4 .s4-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    animation: fadeUp 0.6s both;
+  }
+  #scene4 .s4-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: white;
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s 0.2s both;
+  }
+  #scene4 .s4-title span { color: var(--green-bright); }
+
+  .browser-mock {
+    width: 760px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    overflow: hidden;
+    animation: fadeUp 0.7s 0.35s both;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(16,185,129,0.1);
+  }
+  .browser-bar {
+    background: rgba(255,255,255,0.06);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .browser-dots { display: flex; gap: 6px; }
+  .browser-dots span { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .browser-url {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    font-family: monospace;
+  }
+  .browser-url .url-green { color: var(--green-bright); }
+
+  .browser-body { padding: 24px 28px; }
+  .detect-banner {
+    background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
+    border: 1px solid rgba(16,185,129,0.35);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: bannerPop 0.5s 1.2s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .detect-icon { font-size: 22px; }
+  .detect-text { flex: 1; }
+  .detect-text strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green-bright);
+    margin-bottom: 2px;
+  }
+  .detect-text span { font-size: 11px; color: rgba(255,255,255,0.5); }
+  .detect-btn {
+    background: var(--green);
+    color: #020c09;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    animation: pulse-green 2s 1.7s infinite;
+  }
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+  }
+  @keyframes bannerPop {
+    from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ════════════════════════════════
+     SCENE 5 — VAULT DEMO
+  ════════════════════════════════ */
+  #scene5 .s5-title {
+    font-size: 44px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 8px;
+    animation: fadeUp 0.6s both;
+  }
+  #scene5 .s5-title span { color: var(--green-bright); }
+  #scene5 .s5-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s 0.15s both;
+  }
+
+  .vault-demo {
+    width: 520px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(16,185,129,0.15);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeUp 0.7s 0.3s both;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .vault-header {
+    background: rgba(16,185,129,0.08);
+    border-bottom: 1px solid rgba(16,185,129,0.1);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vault-logo {
+    width: 28px; height: 28px; border-radius: 8px; overflow: hidden;
+  }
+  .vault-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .vault-title-text { font-size: 14px; font-weight: 700; color: white; }
+  .vault-items { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .vault-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .vault-item:nth-child(1) { animation: cardIn 0.4s 0.5s both; }
+  .vault-item:nth-child(2) { animation: cardIn 0.4s 0.65s both; }
+  .vault-item:nth-child(3) { animation: cardIn 0.4s 0.80s both; }
+  .vault-item:nth-child(4) { animation: cardIn 0.4s 0.95s both; }
+  .vi-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .vi-info { flex: 1; }
+  .vi-name { font-size: 12px; font-weight: 600; color: white; }
+  .vi-sub { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 1px; }
+  .vi-copy {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.25);
+    color: var(--green-bright);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  /* ════════════════════════════════
+     SCENE 6 — TAGLINE BIG
+  ════════════════════════════════ */
+  #scene6 .s6-word {
+    font-size: 88px;
+    font-weight: 900;
+    letter-spacing: -4px;
+    line-height: 1;
+    text-align: center;
+  }
+  #scene6 .s6-word:nth-child(1) {
+    background: linear-gradient(135deg, #fff 0%, #d1fae5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: wordSlam 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  #scene6 .s6-word:nth-child(2) {
+    background: linear-gradient(135deg, #d1fae5 0%, var(--green-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: wordSlam 0.5s 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  #scene6 .s6-word:nth-child(3) {
+    background: linear-gradient(135deg, var(--green-bright) 0%, var(--green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: wordSlam 0.5s 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  #scene6 .s6-dots {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    animation: fadeUp 0.6s 1s both;
+  }
+  #scene6 .s6-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-bright); opacity: 0.6; }
+  @keyframes wordSlam {
+    from { opacity: 0; transform: scale(1.4) translateY(20px); filter: blur(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  }
+
+  /* ════════════════════════════════
+     SCENE 7 — MADE BY / CREDITS
+  ════════════════════════════════ */
+  #scene7 .s7-made {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.2s both;
+  }
+  .pratick-block {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    animation: fadeUp 0.7s 0.5s cubic-bezier(0.34,1.4,0.64,1) both;
+  }
+  .pl-logo {
+    width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+    box-shadow: 0 0 30px rgba(167,139,250,0.5), 0 0 60px rgba(167,139,250,0.2);
+  }
+  .pl-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .pl-text .pl-name {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #e9d5ff 0%, #a78bfa 50%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .pl-text .pl-sub {
+    font-size: 15px;
+    color: rgba(167,139,250,0.5);
+    font-weight: 400;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+  #scene7 .s7-klippy {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 28px;
+    border-radius: 999px;
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+    animation: fadeUp 0.7s 0.9s both;
+  }
+  .sk-logo { width: 36px; height: 36px; border-radius: 10px; overflow: hidden; }
+  .sk-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .sk-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+  .sk-sep { color: rgba(255,255,255,0.2); font-size: 20px; }
+  .sk-tagline { font-size: 14px; color: rgba(52,211,153,0.7); }
+
+  /* ════════════════════════════════
+     SCENE 8 — FINAL CTA
+  ════════════════════════════════ */
+  #scene8 .s8-logo {
+    width: 140px; height: 140px; border-radius: 32px; overflow: hidden;
+    box-shadow:
+      0 0 60px rgba(16,185,129,0.7),
+      0 0 120px rgba(16,185,129,0.35);
+    animation: s1-logo 0.8s both;
+  }
+  #scene8 .s8-logo img { width: 100%; height: 100%; object-fit: cover; }
+  #scene8 .s8-name {
+    margin-top: 24px;
+    font-size: 80px;
+    font-weight: 900;
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, #ffffff 0%, #d1fae5 40%, var(--green-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: s1-text 0.7s 0.3s both;
+  }
+  #scene8 .s8-tag {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    color: rgba(52,211,153,0.6);
+    text-transform: uppercase;
+    margin-top: 8px;
+    animation: s1-text 0.7s 0.6s both;
+  }
+  .s8-github {
+    margin-top: 32px;
+    padding: 14px 32px;
+    border-radius: 999px;
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.35);
+    color: var(--green-bright);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    animation: fadeUp 0.6s 0.9s both;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .s8-github-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green-bright);
+    animation: blink 1.2s 1.5s infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+  /* Shared animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scene fade transitions */
+  .scene { transition: opacity 0.6s ease; }
+
+  /* Scan line overlay */
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.04) 3px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  /* Ambient glow orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+    transition: all 3s ease;
+  }
+  .orb-1 { width: 400px; height: 400px; background: var(--green); top: -100px; left: -100px; }
+  .orb-2 { width: 500px; height: 500px; background: #7c3aed; bottom: -150px; right: -100px; }
+  .orb-3 { width: 300px; height: 300px; background: var(--green-bright); top: 50%; left: 50%; transform: translate(-50%, -50%); }
+</style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<canvas id="particles"></canvas>
+<div class="grid-bg"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<!-- Progress bar -->
+<div id="progressBar" style="width:0%"></div>
+
+<!-- Scene counter -->
+<div id="sceneCounter">SCENE 01 / 08</div>
+
+<!-- Controls -->
+<div id="controls">
+  <button onclick="prevScene()">← Prev</button>
+  <button onclick="togglePlay()" id="playBtn">⏸ Pause</button>
+  <button onclick="nextScene()">Next →</button>
+</div>
+
+<!-- ═══ SCENE 1: Logo Reveal ═══ -->
+<div class="scene" id="scene1">
+  <div class="logo-ring">
+    <img src="icons/logo_hd.png" alt="Klippy">
+  </div>
+  <div class="s1-name">Klippy</div>
+  <div class="s1-tagline">Clip it. Keep it. Copy it.</div>
+</div>
+
+<!-- ═══ SCENE 2: Problem ═══ -->
+<div class="scene" id="scene2">
+  <div class="s2-eyebrow">The Problem</div>
+  <h2 class="s2-headline">
+    How many times have you <span>copy-pasted</span> your links today?
+  </h2>
+  <p class="s2-sub">
+    LinkedIn here, GitHub there, HackerRank somewhere — scattered across browser history, notes apps, and memory.
+  </p>
+  <div class="s2-tabs">
+    <div class="s2-tab">😤 Browser History</div>
+    <div class="s2-tab">📝 Sticky Notes</div>
+    <div class="s2-tab">🧠 From Memory</div>
+    <div class="s2-tab">❌ Forgotten</div>
+  </div>
+</div>
+
+<!-- ═══ SCENE 3: Features ═══ -->
+<div class="scene" id="scene3">
+  <h2 class="s3-title">Everything in <span>one vault.</span></h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="fc-icon">🔗</span>
+      <div class="fc-name">Profile Links</div>
+      <div class="fc-desc">GitHub, LinkedIn, HackerRank, YouTube & 10+ more</div>
+    </div>
+    <div class="feature-card">
+      <span class="fc-icon">🔐</span>
+      <div class="fc-name">Password Vault</div>
+      <div class="fc-desc">Master-password protected. Zero compromise.</div>
+    </div>
+    <div class="feature-card">
+      <span class="fc-icon">🗝️</span>
+      <div class="fc-name">API Keys</div>
+      <div class="fc-desc">Store tokens, SSH keys & secrets securely</div>
+    </div>
+    <div class="feature-card">
+      <span class="fc-icon">📝</span>
+      <div class="fc-name">Secure Notes</div>
+      <div class="fc-desc">Recovery codes, snippets & scratchpad</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCENE 4: Auto-detect ═══ -->
+<div class="scene" id="scene4">
+  <div class="s4-label">Smart Detection</div>
+  <h2 class="s4-title">Klippy <span>knows</span> where you are.</h2>
+  <div class="browser-mock">
+    <div class="browser-bar">
+      <div class="browser-dots">
+        <span class="dot-r"></span>
+        <span class="dot-y"></span>
+        <span class="dot-g"></span>
+      </div>
+      <div class="browser-url">
+        <span class="url-green">hackerrank.com</span>/profile/<span class="url-green">pratick29</span>
+      </div>
+    </div>
+    <div class="browser-body">
+      <div class="detect-banner">
+        <div class="detect-icon">⚡</div>
+        <div class="detect-text">
+          <strong>HackerRank profile detected!</strong>
+          <span>pratick29 — Save to your Klippy vault?</span>
+        </div>
+        <button class="detect-btn">+ Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCENE 5: Vault Demo ═══ -->
+<div class="scene" id="scene5">
+  <h2 class="s5-title">Your links. <span>One click away.</span></h2>
+  <p class="s5-sub">Every credential. Always at your fingertips.</p>
+  <div class="vault-demo">
+    <div class="vault-header">
+      <div class="vault-logo"><img src="icons/logo_hd.png" alt="Klippy"></div>
+      <div class="vault-title-text">Klippy — Profile Links</div>
+    </div>
+    <div class="vault-items">
+      <div class="vault-item">
+        <div class="vi-icon">🐙</div>
+        <div class="vi-info">
+          <div class="vi-name">GitHub</div>
+          <div class="vi-sub">github.com/pratick29</div>
+        </div>
+        <div class="vi-copy">Copy</div>
+      </div>
+      <div class="vault-item">
+        <div class="vi-icon">💼</div>
+        <div class="vi-info">
+          <div class="vi-name">LinkedIn</div>
+          <div class="vi-sub">linkedin.com/in/pratick</div>
+        </div>
+        <div class="vi-copy">Copy</div>
+      </div>
+      <div class="vault-item">
+        <div class="vi-icon">💻</div>
+        <div class="vi-info">
+          <div class="vi-name">HackerRank</div>
+          <div class="vi-sub">hackerrank.com/profile/pratick29</div>
+        </div>
+        <div class="vi-copy">Copy</div>
+      </div>
+      <div class="vault-item">
+        <div class="vi-icon">🏆</div>
+        <div class="vi-info">
+          <div class="vi-name">LeetCode</div>
+          <div class="vi-sub">leetcode.com/u/pratick29</div>
+        </div>
+        <div class="vi-copy">Copy</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCENE 6: Tagline Slam ═══ -->
+<div class="scene" id="scene6">
+  <div class="s6-word">Clip it.</div>
+  <div class="s6-word">Keep it.</div>
+  <div class="s6-word">Copy it.</div>
+  <div class="s6-dots">
+    <div class="s6-dot"></div>
+    <div class="s6-dot"></div>
+    <div class="s6-dot"></div>
+  </div>
+</div>
+
+<!-- ═══ SCENE 7: Credits ═══ -->
+<div class="scene" id="scene7">
+  <div class="s7-made">Crafted with 💜 by</div>
+  <div class="pratick-block">
+    <div class="pl-logo">
+      <img src="icons/pratick-labs-logo.png" alt="Pratick Labs">
+    </div>
+    <div class="pl-text">
+      <div class="pl-name">Pratick Labs</div>
+      <div class="pl-sub">Building tools developers love</div>
+    </div>
+  </div>
+  <div class="s7-klippy">
+    <div class="sk-logo"><img src="icons/logo_hd.png" alt="Klippy"></div>
+    <div class="sk-text">Klippy</div>
+    <div class="sk-sep">·</div>
+    <div class="sk-tagline">Clip it. Keep it. Copy it.</div>
+  </div>
+</div>
+
+<!-- ═══ SCENE 8: Final ═══ -->
+<div class="scene" id="scene8">
+  <div class="s8-logo">
+    <img src="icons/logo_hd.png" alt="Klippy">
+  </div>
+  <div class="s8-name">Klippy</div>
+  <div class="s8-tag">Your Personal Vault</div>
+  <div class="s8-github">
+    <div class="s8-github-dot"></div>
+    github.com/pratick29/Klippy
+  </div>
+</div>
+
+<script>
+// ── Particle system ──
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = 1280; canvas.height = 720;
+
+const particles = Array.from({length: 80}, () => ({
+  x: Math.random() * 1280,
+  y: Math.random() * 720,
+  r: Math.random() * 1.5 + 0.3,
+  vx: (Math.random() - 0.5) * 0.3,
+  vy: -Math.random() * 0.4 - 0.1,
+  alpha: Math.random() * 0.5 + 0.1
+}));
+
+function animParticles() {
+  ctx.clearRect(0, 0, 1280, 720);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(52,211,153,${p.alpha})`;
+    ctx.fill();
+    p.x += p.vx; p.y += p.vy;
+    if (p.y < -5) { p.y = 725; p.x = Math.random() * 1280; }
+    if (p.x < 0) p.x = 1280;
+    if (p.x > 1280) p.x = 0;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ── Scene system ──
+const scenes = document.querySelectorAll('.scene');
+const TOTAL = scenes.length;
+// Durations for each scene in milliseconds
+const DURATIONS = [3500, 4000, 4000, 4500, 4500, 3500, 4000, 5000];
+
+let current = 0;
+let timer = null;
+let playing = true;
+let elapsed = 0;
+let progressStart = null;
+const totalDuration = DURATIONS.reduce((a,b) => a+b, 0);
+
+function showScene(idx) {
+  scenes.forEach((s, i) => {
+    s.style.opacity = i === idx ? '1' : '0';
+    s.classList.toggle('active', i === idx);
+  });
+  document.getElementById('sceneCounter').textContent =
+    `SCENE ${String(idx+1).padStart(2,'0')} / ${String(TOTAL).padStart(2,'0')}`;
+}
+
+function getElapsedBeforeScene(idx) {
+  return DURATIONS.slice(0, idx).reduce((a, b) => a + b, 0);
+}
+
+function nextScene() {
+  if (current < TOTAL - 1) {
+    current++;
+    elapsed = getElapsedBeforeScene(current);
+    showScene(current);
+    if (playing) scheduleNext();
+  }
+}
+
+function prevScene() {
+  if (current > 0) {
+    current--;
+    elapsed = getElapsedBeforeScene(current);
+    showScene(current);
+    if (playing) scheduleNext();
+  }
+}
+
+function scheduleNext() {
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    if (current < TOTAL - 1) nextScene();
+    else playing = false;
+  }, DURATIONS[current]);
+}
+
+function togglePlay() {
+  playing = !playing;
+  document.getElementById('playBtn').textContent = playing ? '⏸ Pause' : '▶ Play';
+  if (playing) scheduleNext();
+  else clearTimeout(timer);
+}
+
+// Progress bar animation
+let progRaf;
+function animProgress() {
+  if (!playing) { requestAnimationFrame(animProgress); return; }
+  const sceneProg = getElapsedBeforeScene(current);
+  const now = performance.now();
+  if (!progressStart) progressStart = now;
+  const sceneElapsed = now - progressStart;
+  const totalElapsed = sceneProg + sceneElapsed;
+  const pct = Math.min((totalElapsed / totalDuration) * 100, 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  requestAnimationFrame(animProgress);
+}
+
+// Start
+showScene(0);
+scheduleNext();
+requestAnimationFrame(() => {
+  progressStart = performance.now();
+  animProgress();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') nextScene();
+  if (e.key === 'ArrowLeft') prevScene();
+  if (e.key === 'p' || e.key === 'P') togglePlay();
+});
+</script>
+</body>
+</html>
