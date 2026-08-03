@@ -108,6 +108,12 @@
 /* ═══════════════ RESET & BASE ═══════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html {
+  border-radius: 18px;
+  overflow: hidden;
+  background: transparent;
+}
+
 body {
   width: 390px;
   min-height: 540px;
@@ -118,9 +124,9 @@ body {
   font-size: 13px;
   line-height: 1.5;
   overflow-x: hidden;
+  overflow-y: hidden;
   user-select: none;
-  border-radius: 14px;
-  overflow: hidden;
+  border-radius: 18px;
   transition: background 0.25s ease, color 0.25s ease;
 }
 
@@ -167,16 +173,15 @@ body {
 
 /* ─── The Klippy Logo Badge ─── */
 .logo-badge {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  border-radius: 13px;
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  border-radius: 14px;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* no border or shadow — the logo image has its own rounded green background */
   box-shadow: none;
   transition: transform 0.2s ease;
   flex-shrink: 0;
@@ -184,17 +189,17 @@ body {
 }
 
 .logo-badge:hover {
-  transform: scale(1.06);
+  transform: scale(1.07);
 }
 
-/* Logo image: let its own rounded corners show */
+/* Logo image: the image itself is the icon — no extra bg needed */
 .header-logo-img {
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   object-fit: cover;
   object-position: center;
   display: block;
-  border-radius: 13px;
+  border-radius: 14px;
 }
 
 .brand-text { display: flex; flex-direction: column; gap: 2px; }
