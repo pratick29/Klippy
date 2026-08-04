@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Klippy - Clip it. Keep it. Copy it.",
   "version": "2.0.0",
-  "description": "Your personal vault for profile links, passwords, API keys & notes. Auto-detects profiles. One-click copy. Secured with master password.",
+  "description": "Personal vault for profile links, passwords, API keys & notes. Auto-detects profiles with one-click copy.",
   "permissions": [
     "storage",
     "contextMenus",
